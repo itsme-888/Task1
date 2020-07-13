@@ -1,0 +1,36 @@
+﻿@model Task_1_with_Identity.Models.IndexViewModel_
+@using Task_1_with_Identity.Helpers
+@using Task_1_with_Identity.Models;
+
+@{string imgPath = "";
+    Phone p = Model.Phones.FirstOrDefault();
+    switch(p.CategoriesId)
+    {
+        case 1: imgPath = "/phone.png";
+            break;
+            case 2: imgPath = "/smart.png";
+            break;
+            case 3: imgPath = "/tablet.png";
+            break;
+            default: imgPath = "/smart.png";
+            break;
+    }
+    }
+
+
+    @foreach (var item in Model.Phones)
+    {
+    <div class="col-lg-3 col-md-6 col-lg-12">
+
+
+        <div class="card">
+            <img src="@Url.Content(String.Format("~/images/{0}", imgPath ))" alt="" style="width:100%">
+            <h1>@item.Name</h1>
+            <p class="price">@item.Price руб.</p>
+            <p>@item.Description</p>
+            <p><button>Добавить карточку</button></p>
+        </div>
+
+
+    </div>
+}

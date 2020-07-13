@@ -72,14 +72,15 @@ else
 
 </style>
 
-<a>
-    @if (HttpContext.Current.User.IsInRole("admin") == true)
-    {
-        @Html.ActionLink("Добавить телефон", "Add", "Home", "", "");
-    }
-</a>
+
 @if (ViewBag.EnableAddButton)
 {
+    <a>
+        @if (HttpContext.Current.User.IsInRole("admin") == true)
+        {
+            @Html.ActionLink("Добавить телефон", "Add", "Home", "", "");
+        }
+    </a>
 
     <p></p>
     using (Html.BeginForm("Index", "Home", FormMethod.Post))
@@ -124,57 +125,7 @@ else
 
     <div class="info">Страница: @(Model.PageInfo.PageNumber + 1)/@Model.PageInfo.TotalPages , элементов загружено: @(Model.PageInfo.PageSize * (Model.PageInfo.PageNumber + 1))/@Model.PageInfo.TotalItems </div>
 
-}
-else
-{
-    string imgsource = "";
-    switch (ViewBag.H3)
-    {
-        case ("Телефоны"):
-            imgsource = "/phone.png";
-            break;
-        case ("Смартфоны"):
-            imgsource = "/smart.png";
-            break;
-        case ("Планшеты"):
-            imgsource = "/tablet.png";
-            break;
-        default:
-            imgsource = "/phone.png";
-            break;
-    }
-
-
-    <div class="container">
-
-        <div class="row">
-            @foreach (var item in Model.Phones)
-            {
-                <div class="col-lg-3 col-md-6 col-lg-12">
-
-
-                    <div class="card">
-                        <img src="@Url.Content(String.Format("~/images/{0}", @imgsource))" alt="" style="width:100%">
-                        <h1>@item.Name</h1>
-                        <p class="price">@item.Price руб.</p>
-                        <p>@item.Description</p>
-                        <p><button>Добавить карточку</button></p>
-                    </div>
-
-
-                </div>
-            }
-        </div>
-
-    </div>
-
-    <div class="btn-group">
-        <p></p>
-        @Html.PageLinks(Model.PageInfo, x => Url.Action("Index", new { page = x }))
-    </div>
-
-}
-<script type="text/javascript">
+    <script type="text/javascript">
         $(function () {
 
             var page = 0;
@@ -235,4 +186,60 @@ else
                 $('html, body').stop().animate({ scrollTop: 0 }, 300);
             });
         });
-</script>
+    </script>
+}
+else
+{
+
+
+    <div class="container">
+
+        <div class="row">
+
+            @Html.Partial("_ItemsCategory");
+        </div>
+
+    </div>
+
+    <div class="btn-group">
+        <p></p>
+        @Html.PageLinks(Model.PageInfo, x => Url.Action("Index", "Home", new { page = x }))
+
+
+    </div>
+
+
+    <script type="text/javascript">
+        $(function () {
+
+            var page = 0;
+            var _inCallback = false;
+
+            function loadItems() {
+                if (page > -1 && !_inCallback) {
+                    _inCallback = true;
+                }
+
+                    else {
+                        return;
+                    }
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Home/Index/?page=' + page,
+                        success: function (data, textstatus) {
+                            if (data != '') {
+                                $("#scrolList").append(data);
+                            }
+                            else {
+                                page = -1;
+                            }
+                            _inCallback = false;
+                        }
+                    });
+                }
+            }
+            </script>
+
+}
+

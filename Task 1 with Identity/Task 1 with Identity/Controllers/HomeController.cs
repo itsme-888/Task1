@@ -7,36 +7,57 @@ using System.Data.Entity;
 using Task_1_with_Identity.Models;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using NLog;
 
 namespace Task_1_with_Identity.Controllers
 {
     public class HomeController : Controller
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         Model1 db = new Model1();
         int pageSize = 30;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id Категории</param>
+        /// <param name="column">Номер столбца таблицы над которым производится сортировка или фильтрация</param>
+        /// <param name="state">Состояние сортировки 0- нет, 1- по возрастанию, 2 - по убыванию</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public ActionResult Index(int? id, int? column, int? state, int? page, string filter)
         {
-
-
+            logger.Trace("Входные параметры в Index: id:+" + id + " column:" + column + " state: " + state + " page: " + page + "filter: " + filter);
+            //if (id != null) pageSize = 4;
+            ViewBag.EnableAddButton = true;
             if (id != null||state == 0 || state == null)
             {
                 page = page ?? 0;
-                ViewBag.EnableAddButton = true;
-                IEnumerable<Phone> phonesPerPages = Refresh(id).OrderBy(o => o.Name).Skip(((int)page - 1) * pageSize).Take(pageSize);
+                
+                IEnumerable<Phone> phonesPerPages = Refresh(id).Skip(((int)page - 1) * pageSize).Take(pageSize);
                 PageInfo pageInfo = new PageInfo { PageNumber = (int)page, PageSize = pageSize, TotalItems = Refresh(id).Count() };
                 IndexViewModel_ ivm = new IndexViewModel_ { PageInfo = pageInfo, Phones = phonesPerPages };
                 if (id != null)
                 {
                     ViewBag.H3 = db.Categories.Where(o => o.Id == id).Single().Name;
                     ViewBag.EnableAddButton = false;
+
+                    if(Request.IsAjaxRequest())
+                    {
+
+                        return PartialView("_ItemsCategory",ivm);
+                    }
+                    return View(ivm);
+
                 }
                 if (state == 0 || state == null)
                 {
                     if (Request.IsAjaxRequest())
                     {
+                        logger.Trace("Происходит возврат частичного представления _Items с подгруженными элементами.");
                         return PartialView("_Items", ivm);
+                        
 
                     }
                     return View(ivm);
@@ -47,7 +68,6 @@ namespace Task_1_with_Identity.Controllers
 
             else
             {
-                ViewBag.EnableAddButton = true;
                 if (filter != null)
                 {
                     if (filter.Length > 0)
