@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Магазин телефонов</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+
+    @Scripts.Render("~/Scripts/jquery.validate.js")
+
+</head>
+@using Microsoft.AspNet.Identity;
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Каталог телефонов <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/Home/Index/">Все телефоны</a></li>
+                            <li class="divider"></li>
+                            @Html.Action("GetCategories", "Home")
+
+                        </ul>
+                    </li>
+                    @if (HttpContext.Current.User.IsInRole("user"))
+                    {
+                        <li>@Html.ActionLink("Обратная связь", "Feedback", "Home")</li>
+                    }
+                        @if (HttpContext.Current.User.IsInRole("admin"))
+                        {
+                            <li>@Html.ActionLink("Покупки", "About", "Home")</li>
+                            <li>@Html.ActionLink("Покупатели", "Contact", "Home")</li>
+                        }
+
+
+                    </ul>
+
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - localhost - Топовый магазин телефонов</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Content/toastr.css")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

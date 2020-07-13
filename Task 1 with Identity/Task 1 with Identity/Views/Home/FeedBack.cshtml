@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "Обратная связь";
+}
+
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+<h2>Обратная связь</h2>
+
+@if (HttpContext.Current.User.IsInRole("admin"))
+{
+    <table class="raz">
+        <tr>
+            <td><p>Пользователь</p></td>
+            <td><p>Дата и время</p></td>
+            <td><p>Сообщение</p></td>
+            <td><a href="/Home/DeleteFeedback/-1">Удалить все</a></td>
+
+        </tr>
+        @foreach (var messages in ViewBag.Feedback)
+        {
+            <tr>
+                <td><p>@messages.UserEmail</p></td>
+                <td><p>@messages.dateTime</p></td>
+                <td><p>@messages.Feedback</p></td>
+                <td><a href="/Home/DeleteFeedback/@messages.Id">Удалить сообщение</a></td>
+
+            </tr>
+        }
+
+    </table>
+}
+else
+{
+
+        <caption>Пользователь:</caption>
+        @Html.TextBox("UserEmail", HttpContext.Current.User.Identity.Name, "", new { @readonly = "readonly" })
+        <p>Сообщение</p>
+        @Html.TextArea("Feedback", new { cols = 40, rows = 5 })
+        <p>
+            <input type="submit" id="send" value="Отправить сообщение" />
+        </p>
+
+
+    
+    <button id="send2" value="TEST">jjjj</button>
+
+
+
+}
+<link href="~/Content/toastr.css" rel="stylesheet" />
+@section scripts
+{
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+
+            $("#send").click(function () {
+
+                var message = {};
+                message.UserEmail = $("#UserEmail").val();
+                console.log(message.UserEmail);
+                message.Feedback = $("#Feedback").val();
+                console.log(message.Feedback);
+                debugger
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("FeedBack")',
+                    data: '{message: ' + JSON.stringify(message) + '}',
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function () {
+                        toastr.success('Сообщение успешно отправлено', 'Успех' ,{ timeOut: 2500, "closeButton": true });
+                        this.disabled = true;
+                            
+                    },
+                    error: function () { toastr.error('Произошла ошибка :(', 'Ошибка' ,{ timeOut: 2500, "closeButton": true }) }
+                });
+                });
+            
+
+
+            $("#send2").click(function () {
+                toastr.success('тест', 'тест' ,{ timeOut: 2500, "closeButton": true });
+                console.log("ffff");
+                
+                
+            });
+            });
+
+    </script>
+}
+

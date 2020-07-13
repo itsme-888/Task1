@@ -1,0 +1,238 @@
+﻿@model Task_1_with_Identity.Models.IndexViewModel_
+@using Task_1_with_Identity.Helpers
+@{
+    ViewBag.Title = "Home Page";
+    if (ViewBag.EnableAddButton == null) { ViewBag.EnableAddButton = false; }
+}
+
+@if (ViewBag.EnableAddButton)
+{
+    <h3>Каталог телефонов</h3>
+}
+else
+{<h3>@ViewBag.H3</h3>}
+<p></p>
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+<style>
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 200px;
+        max-height: 400px;
+        margin: auto;
+        text-align: center;
+        font-family: arial;
+    }
+
+    .price {
+        color: grey;
+        font-size: 20px;
+    }
+
+    .card button {
+        border: none;
+        outline: 0;
+        padding: 12px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+    }
+
+        .card button:hover {
+            opacity: 0.7;
+        }
+</style>
+
+<style>
+#upbutton {
+    background: url(@Url.Content("~/images/up.png")) no-repeat top left;
+    height: 70px;
+    width: 70px;
+    bottom: 40px;
+    right: 40px;
+    cursor: pointer;
+    display: none;
+    position: fixed;
+    z-index: 999;
+  }
+
+
+</style>
+
+<a>
+    @if (HttpContext.Current.User.IsInRole("admin") == true)
+    {
+        @Html.ActionLink("Добавить телефон", "Add", "Home", "", "");
+    }
+</a>
+@if (ViewBag.EnableAddButton)
+{
+
+    <p></p>
+    using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+        <p>
+            Сортировка по:  <select name="column" id="column">
+                <option value="0">названию</option>
+                <option value="1">цене</option>
+                <option value="2">характеристикам</option>
+                <option value="3">категории</option>
+            </select>
+            @Html.TextBox("name")
+
+            <input type="submit" value="Найти" />
+            <a href="/Home/Index">Сбросить фильтр</a>
+        </p>
+    }
+    <p>@ViewBag.Filter</p>
+    string arrow = (ViewBag.State == 1) ? "🔼" : (ViewBag.State == 2) ? "🔽" : "";
+    string a1 = (ViewBag.Column == 0) ? arrow : "";
+    string a2 = (ViewBag.Column == 1) ? arrow : "";
+    string a3 = (ViewBag.Column == 2) ? arrow : "";
+
+    <div id="upbutton"></div>
+    <table class="raz" id="scrolList">
+        <tr>
+            <td><p> @Html.ActionLink("Телефоны" + a1, "Index", "Home", new { column = 0, state = (ViewBag.State == null) ? 1 : ViewBag.State > 1 || ViewBag.Column != 0 ? 0 : (ViewBag.State + 1) }, null) </p></td>
+            <td><p>@Html.ActionLink("Цена" + a2, "Index", "Home", new { column = 1, state = (ViewBag.State == null) ? 1 : ViewBag.State > 1 || ViewBag.Column != 1 ? 0 : (ViewBag.State + 1) }, null)</p></td>
+            <td><p>@Html.ActionLink("Характеристики" + a3, "Index", "Home", new { column = 2, state = (ViewBag.State == null) ? 1 : ViewBag.State > 1 || ViewBag.Column != 2 ? 0 : (ViewBag.State + 1) }, null)</p></td>
+            <td><p>Категория</p></td>
+            @if (HttpContext.Current.User.IsInRole("admin") == true)
+            {
+                <td></td>
+            }
+        </tr>
+
+        @Html.Partial("_Items")
+
+    </table>
+
+    <div id="loading"><img src='@Url.Content("~/images/loading_spinner.gif")'></div>
+
+    <div class="info">Страница: @(Model.PageInfo.PageNumber + 1)/@Model.PageInfo.TotalPages , элементов загружено: @(Model.PageInfo.PageSize * (Model.PageInfo.PageNumber + 1))/@Model.PageInfo.TotalItems </div>
+
+}
+else
+{
+    string imgsource = "";
+    switch (ViewBag.H3)
+    {
+        case ("Телефоны"):
+            imgsource = "/phone.png";
+            break;
+        case ("Смартфоны"):
+            imgsource = "/smart.png";
+            break;
+        case ("Планшеты"):
+            imgsource = "/tablet.png";
+            break;
+        default:
+            imgsource = "/phone.png";
+            break;
+    }
+
+
+    <div class="container">
+
+        <div class="row">
+            @foreach (var item in Model.Phones)
+            {
+                <div class="col-lg-3 col-md-6 col-lg-12">
+
+
+                    <div class="card">
+                        <img src="@Url.Content(String.Format("~/images/{0}", @imgsource))" alt="" style="width:100%">
+                        <h1>@item.Name</h1>
+                        <p class="price">@item.Price руб.</p>
+                        <p>@item.Description</p>
+                        <p><button>Добавить карточку</button></p>
+                    </div>
+
+
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <div class="btn-group">
+        <p></p>
+        @Html.PageLinks(Model.PageInfo, x => Url.Action("Index", new { page = x }))
+    </div>
+
+}
+<script type="text/javascript">
+        $(function () {
+
+            var page = 0;
+            var _inCallback = false;
+
+            function loadItems() {
+                if (page > -1 && !_inCallback) {
+                    _inCallback = true;
+                    if (page + 1 <@Model.PageInfo.TotalPages) {
+                        page++;
+
+                    }
+                    else {
+                        $('div.info').text("Страница: " + (page + 1) + "/" +@Model.PageInfo.TotalPages +", элементов загружено: " + @Model.PageInfo.TotalItems + "/" +@Model.PageInfo.TotalItems);
+                        $("div#loading").hide();
+                        return;
+                    }
+
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Home/Index/?page=' + page,
+                        success: function (data, textstatus) {
+                            if (data != '') {
+                                $('div.info').text("Страница: " + (page + 1) + "/" +@Model.PageInfo.TotalPages +", элементов загружено: " + @(Model.PageInfo.PageSize)* (page + 1) + "/" +@Model.PageInfo.TotalItems);
+                                $("#scrolList").append(data);
+                            }
+                            else {
+                                page = -1;
+                            }
+                            _inCallback = false;
+                            $("div#loading").hide();
+                        }
+                    });
+                }
+            }
+
+
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+                    if ($('#upbutton').is(':hidden')) {
+                        $('#upbutton').css({ opacity: 1 }).fadeIn('slow');
+                    }
+                } else {
+                    $('#upbutton').stop(true, false).fadeOut('fast');
+
+                }
+                    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                        if (page + 1 <=@Model.PageInfo.TotalPages && !_inCallback) {
+                            $('div#loading').show();
+                            setTimeout(loadItems, 1000);
+                        }
+                    }
+
+
+                });
+            $('#upbutton').click(function () {
+                $('html, body').stop().animate({ scrollTop: 0 }, 300);
+            });
+        });
+</script>

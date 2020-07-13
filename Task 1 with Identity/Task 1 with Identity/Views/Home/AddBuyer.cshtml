@@ -1,0 +1,24 @@
+﻿@model Task_1_with_Identity.Models.Buyer
+
+@{
+    ViewBag.Title = "Добавить покупателя";
+}
+
+
+
+@using (Html.BeginForm("AddBuyer", "Home", FormMethod.Post))
+{
+    <h2>Добавить покупателя</h2>
+    <p>Имя</p>
+    @Html.TextBox("Name")
+    <p>Фамилия</p>
+    @Html.TextBox("Surname")
+    <p>Номер телефона</p>
+    @Html.TextBox("PhoneNumber")
+    <p></p>
+<p>
+     
+    <input type="submit" value="Добавить покупателя" />
+</p>
+}
+

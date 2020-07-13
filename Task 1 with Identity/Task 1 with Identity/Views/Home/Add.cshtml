@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Add";
+}
+@using (Html.BeginForm("Add", "Home", FormMethod.Post))
+{
+    <h2>Добавить новый девайс</h2>
+    <p>Название</p>
+    @Html.TextBox("Name")
+    <p>Характеристики</p>
+    @Html.TextBox("Description")
+    <p>Цена</p>
+    @Html.TextBox("Price")
+    <p>Выберите тип устройства</p>
+    <p>
+        @Html.DropDownList("dropdown",(ViewBag.Categories)as SelectList)
+    </p>
+
+    <input type="submit" value="Добавить телефон!" />
+}
+
+
+

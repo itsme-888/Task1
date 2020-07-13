@@ -1,0 +1,6 @@
+﻿@foreach (var cat in ViewBag.Category)
+{
+    string name = @cat.Name;
+    <li>@Html.ActionLink(name, "Index", "Home", new { id=cat.Id, page=1 },null ) </li>
+}
+

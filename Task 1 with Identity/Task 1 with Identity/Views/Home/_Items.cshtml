@@ -1,0 +1,21 @@
+﻿@model Task_1_with_Identity.Models.IndexViewModel_
+@using Task_1_with_Identity.Helpers
+
+@foreach (var item in Model.Phones)
+{
+    <tr>
+        <td><p>@item.Name</p></td>
+        <td><p>@item.Price</p></td>
+        <td><p>@item.Description</p></td>
+        <td><p>@item.Categories.Name</p></td>
+        @if (HttpContext.Current.User.IsInRole("admin") == true)
+        {
+            <td><p><a href="/Home/Delete/@item.Id">Удалить телефон</a></p></td>
+        }
+
+    </tr>
+
+
+}
+
+

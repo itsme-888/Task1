@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+<h3>Лист покупателей</h3>
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+
+<a href="/Home/AddBuyer/">Добавить покупателя</a>
+<table class="raz">
+    <tr>
+        <td><p>Имя</p></td>
+        <td><p>Фамилия</p></td>
+        <td><p>Телефон</p></td>
+        <td></td>
+    </tr>
+    @foreach (var b in ViewBag.Buyer)
+    {
+        <tr>
+            <td><p>@b.Name</p></td>
+            <td><p>@b.Surname</p></td>
+            <td><p>@b.PhoneNumber</p></td>
+            <td><p><a href="/Home/DeleteBuyer/@b.Id">Удалить покупателя</a></p></td>
+        </tr>
+    }
+</table>

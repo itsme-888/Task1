@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "About";
+}
+<h3>Список покупок</h3>
+    <style>
+        .raz {
+            border-spacing: 9.6px;
+            /* или */
+            border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+        }
+
+            .raz,
+            .raz td {
+                border: 1px solid red;
+            }
+    </style>
+    <table class="raz">
+        <tr>
+            <td><p>Устройство</p></td>
+            <td><p>Категория</p></td>
+            <td><p>Покупатель</p></td>
+            <td>Дата покупки</td>
+            <td><p>Цена</p></td>
+            <td>Количество</td>
+            <td>Итого</td>
+        </tr>
+        @foreach (var b in ViewBag.Buy)
+        {
+            decimal total = @b.Count * @b.Phone.Price;
+            <tr>
+
+                <td><p>@b.Phone.Name</p></td>
+                <td><p>@b.Phone.Categories.Name</p></td>
+                <td><p>@b.Buyer.Name @b.Buyer.Surname</p></td>
+                <td><p>@b.Date</p></td>
+                <td><p>@b.Phone.Price</p></td>
+                <td><p>@b.Count</p></td>
+
+                <td><p>@total</p></td>
+
+
+            </tr>
+        }
+    </table>
