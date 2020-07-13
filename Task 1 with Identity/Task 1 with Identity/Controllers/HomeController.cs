@@ -107,11 +107,7 @@ namespace Task_1_with_Identity.Controllers
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+
         private IEnumerable<Phone> Refresh(int? id)
         {
             IEnumerable<Phone> p = db.Phone;
