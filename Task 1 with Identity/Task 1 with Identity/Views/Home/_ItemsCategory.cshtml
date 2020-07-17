@@ -4,22 +4,26 @@
 
 @{string imgPath = "";
     Phone p = Model.Phones.FirstOrDefault();
-    switch(p.CategoriesId)
+    switch (p.CategoriesId)
     {
-        case 1: imgPath = "/phone.png";
+        case 1:
+            imgPath = "/phone.png";
             break;
-            case 2: imgPath = "/smart.png";
+        case 2:
+            imgPath = "/smart.png";
             break;
-            case 3: imgPath = "/tablet.png";
+        case 3:
+            imgPath = "/tablet.png";
             break;
-            default: imgPath = "/smart.png";
+        default:
+            imgPath = "/smart.png";
             break;
     }
-    }
+}
 
 
-    @foreach (var item in Model.Phones)
-    {
+@foreach (var item in Model.Phones)
+{
     <div class="col-lg-3 col-md-6 col-lg-12">
 
 
@@ -28,9 +32,48 @@
             <h1>@item.Name</h1>
             <p class="price">@item.Price руб.</p>
             <p>@item.Description</p>
-            <p><button>Добавить карточку</button></p>
+            <p>
+                <button id="@item.Id" class="addtocart">Добавить в корзину</button>
+                <input type='button' value='-' class='qtyminus' field='quantity' id="@item.Id minus" />
+                <input type='text' readonly name='quantity' value='1' class='qty' id="text @item.Id" />
+                <input type='button' value='+' class='qtyplus' field='quantity' id="@item.Id plus" />
+            </p>
         </div>
-
-
     </div>
 }
+<div>
+    <script>
+        jQuery(document).ready(function () {
+
+
+            $('.qtyplus').click(function (e) {
+                e.preventDefault();
+                var currentId = parseInt($(this).prop('id'), 10);
+                currentId = "text " + currentId;
+                var tb = document.getElementById(currentId);
+                var currentVal = $(tb).val(); 
+
+                if (!isNaN(currentVal)) {
+                    $(tb).val(parseInt(currentVal,10) + 1);
+                } else {
+                    $(tb).val(1);
+                }
+            });
+
+
+            $(".qtyminus").click(function (e) {
+                e.preventDefault();
+             var currentId = parseInt($(this).prop('id'), 10);
+                currentId = "text " + currentId;
+                var tb = document.getElementById(currentId);
+                var currentVal = $(tb).val(); 
+
+                if (!isNaN(currentVal) && currentVal > 1) {
+                    $(tb).val(currentVal - 1);
+                } else {
+                    $(tb).val(1);
+                }
+            });
+        });
+    </script>
+</div>

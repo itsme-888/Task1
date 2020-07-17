@@ -18,6 +18,7 @@ namespace Task_1_with_Identity.Models
         public virtual DbSet<Phone> Phone { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
 
+        public virtual DbSet<Cart> Cart { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

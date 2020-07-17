@@ -13,6 +13,7 @@ namespace Task_1_with_Identity.Models
         public Phone()
         {
             Buy = new HashSet<Buy>();
+            Carts = new HashSet<Cart>();
         }
 
         public int Id { get; set; }
@@ -30,6 +31,7 @@ namespace Task_1_with_Identity.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Buy> Buy { get; set; }
+        public virtual ICollection<Cart> Carts { get; set; }
 
         public virtual Categories Categories { get; set; }
     }

@@ -11,11 +11,41 @@ using NLog;
 
 namespace Task_1_with_Identity.Controllers
 {
+    public class CartAdd
+    {
+        public int Count { get; set; }
+        public int IdPhone { get; set; }
+        public string User { get; set; }
+    }
+
+
     public class HomeController : Controller
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Model1 db = new Model1();
         int pageSize = 30;
+
+        [HttpGet]
+        public JsonResult GetPhonesInCart(string currentUser)
+        {
+            var carts = db.Cart.Where(m => m.buyer.Email == currentUser).Select(m=>m.phone.Id).ToArray();
+            return Json(carts,JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult AddToCart(CartAdd add)
+        {
+
+            Cart cart = new Cart();
+            cart.Count = add.Count;
+            cart.buyer = db.Buyer.Where(m=>m.Email==add.User).SingleOrDefault();
+            cart.phone = db.Phone.Find(add.IdPhone);
+
+            db.Cart.Add(cart);
+            db.SaveChanges();
+            return Json(new { PhoneName = cart.phone.Name, Count =cart.buyer.Carts.Count()}, JsonRequestBehavior.AllowGet);
+        }
+
 
         /// <summary>
         /// 
@@ -26,10 +56,11 @@ namespace Task_1_with_Identity.Controllers
         /// <param name="page">Номер страницы</param>
         /// <param name="filter"></param>
         /// <returns></returns>
+        /// 
         public ActionResult Index(int? id, int? column, int? state, int? page, string filter)
         {
-            logger.Trace("Входные параметры в Index: id:+" + id + " column:" + column + " state: " + state + " page: " + page + "filter: " + filter);
-            //if (id != null) pageSize = 4;
+            logger.Trace("Входные параметры в Index: id:" + id + " column:" + column + " state: " + state + " page: " + page + " filter: " + filter);
+            if (id != null) pageSize = 4;
             ViewBag.EnableAddButton = true;
             if (id != null||state == 0 || state == null)
             {
@@ -98,8 +129,12 @@ namespace Task_1_with_Identity.Controllers
         [HttpPost]
         public ActionResult Index(string name, FormCollection form)
         {
-            int col = int.Parse(form["column"]);
-            return RedirectToAction("Index", new { filter = name, column = col });
+            if (name != null && form != null)
+            {
+                int col = int.Parse(form["column"]);
+                return RedirectToAction("Index", new { filter = name, column = col });
+            }
+            return Json("", JsonRequestBehavior.AllowGet);
         }
 
         private IEnumerable<Phone> Filter(int? column, int? state)
@@ -266,5 +301,7 @@ namespace Task_1_with_Identity.Controllers
             ViewBag.Feedback = messages;
             return View("FeedBack");
         }
+
+
     }
 }

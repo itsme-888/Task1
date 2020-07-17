@@ -1,0 +1,67 @@
+﻿@using Task_1_with_Identity.Models;
+@{
+    ViewBag.Title = "История покупок";
+
+}
+
+<h2>История покупок</h2>
+@{
+
+    Buyer buyer = ViewBag.Buyer;
+    decimal Total = 0;
+    decimal Price = 0;
+
+}
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+@if (buyer.Buy.Count == 0)
+{
+    <h3>@buyer.Surname @buyer.Name, Вы еще не совершали покупок у нас, но все  <a href="~/Home/Index">впереди</a> </h3>
+}
+else
+{
+    <h3>@buyer.Surname @buyer.Name, список Ваших прошлых покупок ниже:</h3>
+    <table class="raz" id="scrolList">
+        <tr>
+            <td><p>Дата</p></td>
+            <td><p>Товар</p></td>
+            <td><p>Стоимость</p></td>
+            <td><p>Количество</p></td>
+            <td><p>Общая стоимость</p></td>
+
+        </tr>
+
+        
+
+            @foreach (Buy buy in buyer.Buy)
+            {
+                Price = (decimal)(@buy.Phone.Price * @buy.Count);
+
+                Total +=Price;
+                <tr>
+                <td><p>@buy.Date </p></td>
+                <td><p>@buy.Phone.Name </p></td>
+                <td><p>@buy.Phone.Price </p></td>
+                <td><p>@buy.Count </p></td>
+                <td><p>@Price </p></td>
+                </tr>
+            }
+
+        
+
+    </table>
+
+    <h4>Общая сумма покупок: @Total руб. </h4>
+}
+
+

@@ -176,6 +176,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Migrations\202007062349596_feedback.cs" />
     <Compile Include="Migrations\202007062349596_feedback.Designer.cs">
       <DependentUpon>202007062349596_feedback.cs</DependentUpon>
@@ -184,9 +185,27 @@
     <Compile Include="Migrations\202007070012487_feedback2.Designer.cs">
       <DependentUpon>202007070012487_feedback2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007141154454_addCart.cs" />
+    <Compile Include="Migrations\202007141154454_addCart.Designer.cs">
+      <DependentUpon>202007141154454_addCart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007141312143_addUserFields.cs" />
+    <Compile Include="Migrations\202007141312143_addUserFields.Designer.cs">
+      <DependentUpon>202007141312143_addUserFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007141352555_addBalanceColumn.cs" />
+    <Compile Include="Migrations\202007141352555_addBalanceColumn.Designer.cs">
+      <DependentUpon>202007141352555_addBalanceColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007151727437_AddFieldCart.cs" />
+    <Compile Include="Migrations\202007151727437_AddFieldCart.Designer.cs">
+      <DependentUpon>202007151727437_AddFieldCart.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AdminManageView.cs" />
     <Compile Include="Models\Buy.cs" />
     <Compile Include="Models\Buyer.cs" />
+    <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\Categories.cs" />
     <Compile Include="Models\C__MigrationHistory.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -287,6 +306,10 @@
     <Content Include="Views\Home\FeedBack.cshtml" />
     <Content Include="Views\Home\_Items.cshtml" />
     <Content Include="Views\Home\_ItemsCategory.cshtml" />
+    <Content Include="Views\Manage\Cart.cshtml" />
+    <Content Include="Views\Manage\History.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Manage\MakeOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -308,6 +331,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007070012487_feedback2.resx">
       <DependentUpon>202007070012487_feedback2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007141154454_addCart.resx">
+      <DependentUpon>202007141154454_addCart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007141312143_addUserFields.resx">
+      <DependentUpon>202007141312143_addUserFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007141352555_addBalanceColumn.resx">
+      <DependentUpon>202007141352555_addBalanceColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007151727437_AddFieldCart.resx">
+      <DependentUpon>202007151727437_AddFieldCart.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

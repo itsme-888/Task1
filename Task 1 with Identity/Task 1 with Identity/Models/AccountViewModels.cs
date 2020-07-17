@@ -55,30 +55,50 @@ namespace Task_1_with_Identity.Models
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Запомнить?")]
         public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Вы должны указать электронную почту")]
         [EmailAddress]
-        [Display(Name = "Email")]
+        [Display(Name = "Электронная почта")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Вы должны указать имя")]
+        [DataType(DataType.Text)]
+        [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 2)]
+        [Display(Name = "Имя")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Вы должны указать фамилию")]
+        [DataType(DataType.Text)]
+        [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 2)]
+        [Display(Name = "Фамилия")]
+        public string Surname { get; set; }
+
+        [Required(ErrorMessage = "Вы должны указать номер телефона")]
+        [Display(Name = "Телефон")]
+        [DataType(DataType.PhoneNumber)]
+        [StringLength(11, ErrorMessage ="Укажите номер телефона в следующем формате: 89992224444",MinimumLength =11)]
+        public string Phone { get; set; }
+
+
+        [Required(ErrorMessage = "Вы должны указать пароль")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Подтвердите пароль")]
+        [Compare("Password", ErrorMessage = "Пароли не совпадают!")]
         public string ConfirmPassword { get; set; }
+
     }
 
     public class ResetPasswordViewModel

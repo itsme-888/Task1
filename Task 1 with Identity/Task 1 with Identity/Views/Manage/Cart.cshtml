@@ -1,0 +1,69 @@
+﻿@model Task_1_with_Identity.Models.Buyer
+@{
+    ViewBag.Title = "Cart";
+}
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+<h2>Корзина</h2>
+
+
+@if (Model.Carts.Count() == 0)
+
+{
+    <h3>В корзине ничего нет</h3>
+}
+
+else
+{
+    <h4>Ваш баланс: @Model.Balance</h4>
+    <table class="raz" id="scrolList">
+        <tr>
+            <td><p>Товар</p></td>
+            <td><p>Количество</p></td>
+            <td><p>Цена</p></td>
+            <td><p>Общая цена</p></td>
+            <td><p>Удалить </p></td>
+        </tr>
+
+
+        @foreach (var item in Model.Carts)
+        {
+            <tr>
+                <td><p> @item.phone.Name </p></td>
+                <td><p> @item.Count </p></td>
+                <td><p> @item.phone.Price </p></td>
+                <td><p>@(item.phone.Price * item.Count)</p></td>
+                <td><p> @Html.ActionLink("Удалить товар", "DeleteFromCart", new { id = item.Id }) </p></td>
+            </tr>
+        }
+
+
+    </table>
+
+    <h4>Всего товаров на сумму: @Model.Carts.Sum(s => s.phone.Price * s.Count)</h4>
+
+    if (Model.Balance >= Model.Carts.Sum(s => s.phone.Price * s.Count))
+    {
+
+        using (Html.BeginForm("MakeOrder", "Manage", FormMethod.Post))
+        {
+
+            <input type="submit" value="Оформить заказ" />
+        }
+    }
+    else
+    {
+< h4 > У вас нехватает средств для покупки.Вы можете пополнить баланс в @Html.ActionLink("личном кабинете", "Index", "Manage") </ h4 >
+    }
+}
+

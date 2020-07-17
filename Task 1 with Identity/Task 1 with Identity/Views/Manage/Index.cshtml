@@ -1,21 +1,48 @@
 ﻿@model Task_1_with_Identity.Models.IndexViewModel
 @{
-    ViewBag.Title = "Manage";
+    ViewBag.Title = "Личный кабинет";
 }
 
 <h2>@ViewBag.Title.</h2>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div>
-    <h4>Change your account settings</h4>
+    <h4>Ваша личная информация</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>Password:</dt>
+        <dt>Email:</dt>
+        <dd>
+            @Model.LoginedBuyer.Email
+        </dd>
+
+        <dt>ФИО:</dt>
+        <dd>
+            @Model.LoginedBuyer.Name @Model.LoginedBuyer.Surname
+        </dd>
+
+        <dt>Телефон:</dt>
+        <dd>
+            @Model.LoginedBuyer.PhoneNumber
+        </dd>
+
+        <dt>Адрес доставки: </dt>
+        <dd>@Model.LoginedBuyer.Address </dd>
+        <dt> Текущий баланс:</dt>
+        <dd id="current">@Model.LoginedBuyer.Balance</dd>
+
+        <dt>Добавить средства:</dt> <dd><input type="text" id="moneyToAdd" /> <input type="button" value="Пополнить" id="addMoney" />  </dd>
+
+    </dl>
+    <hr />
+
+
+    <dl class="dl-horizontal">
+        <dt>Пароль:</dt>
         <dd>
             [
             @if (Model.HasPassword)
             {
-                @Html.ActionLink("Change your password", "ChangePassword")
+                @Html.ActionLink("Измененить пароль", "ChangePassword")
             }
             else
             {
@@ -23,65 +50,67 @@
             }
             ]
         </dd>
-        <dt>External Logins:</dt>
+
+        <dt>Корзина:</dt>
         <dd>
-            @Model.Logins.Count [
-            @Html.ActionLink("Manage", "ManageLogins") ]
+            @Html.ActionLink("Корзина", "Cart", "Manage", null, null)
         </dd>
-        @*
-            Phone Numbers can used as a second factor of verification in a two-factor authentication system.
-             
-             See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-             
-             Uncomment the following block after you have set up two-factor authentication
-        *@
-        @*  
-            <dt>Phone Number:</dt>
-            <dd>
-                @(Model.PhoneNumber ?? "None")
-                @if (Model.PhoneNumber != null)
-                {
-                    <br />
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
-                    using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
-                    }
-                }
-                else
-                {
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
-                }
-            </dd>
-        *@
-        <dt>Two-Factor Authentication:</dt>
+
+        <dt>История покупок</dt>
         <dd>
-            <p>
-                There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication.
-            </p>
-            @*@if (Model.TwoFactor)
-                {
-                    using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Enabled
-                        <input type="submit" value="Disable" class="btn btn-link" />
-                        </text>
-                    }
-                }
-                else
-                {
-                    using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Disabled
-                        <input type="submit" value="Enable" class="btn btn-link" />
-                        </text>
-                    }
-                }*@
+            @Html.ActionLink("История покупок", "History", "Manage", null, null)
         </dd>
+
+
     </dl>
+
+
+
+
 </div>
+<script>
+
+        jQuery(document).ready(function () {
+
+            $('#addMoney').click(function () {
+                var money = parseInt($("#moneyToAdd").val(),10);
+                if (!isNaN(money)) {
+
+                    if (money < 1) {
+                        toastr.warning('Сумма введена неверно!', { timeOut: 2500, "closeButton": true });
+                        return;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Manage/AddMoney/?money=" + money,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response != null) {
+
+                                toastr.success('Вы успешно пополнили счет', { timeOut: 2500, "closeButton": true });
+                                $("#current").text(response.Count);
+
+                            }
+                            else {
+
+                            }
+
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        }
+
+                    });
+                }
+                else {
+                    toastr.warning('Сумма введена неверно!', { timeOut: 2500, "closeButton": true });
+                }
+            });
+        });
+
+</script>

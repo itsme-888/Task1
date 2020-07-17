@@ -54,6 +54,13 @@ else
         .card button:hover {
             opacity: 0.7;
         }
+        .qty {
+    width: 40px;
+    height: 25px;
+    text-align: center;
+}
+input.qtyplus { width:25px; height:25px;}
+input.qtyminus { width:25px; height:25px;}
 </style>
 
 <style>
@@ -121,9 +128,14 @@ else
 
     </table>
 
+
+
     <div id="loading"><img src='@Url.Content("~/images/loading_spinner.gif")'></div>
 
     <div class="info">Страница: @(Model.PageInfo.PageNumber + 1)/@Model.PageInfo.TotalPages , элементов загружено: @(Model.PageInfo.PageSize * (Model.PageInfo.PageNumber + 1))/@Model.PageInfo.TotalItems </div>
+
+
+
 
     <script type="text/javascript">
         $(function () {
@@ -208,38 +220,80 @@ else
 
     </div>
 
-
     <script type="text/javascript">
         $(function () {
 
-            var page = 0;
-            var _inCallback = false;
+            var currentUser = "@HttpContext.Current.User.Identity.Name";
 
-            function loadItems() {
-                if (page > -1 && !_inCallback) {
-                    _inCallback = true;
-                }
+            if (currentUser != "") {
 
-                    else {
-                        return;
+                $.ajax({
+                    type: 'GET',
+                    url: '/Home/GetPhonesInCart/?currentUser=' + currentUser,
+                    success: function (data) {
+
+                        jQuery.each(data, function () {
+                            $("#" + this).prop('disabled', 'true');
+                        $("#" + this).text("Уже в корзине");
+
+     });
+
+                    },
+                    error: function () {
+
                     }
+                });
+            }
 
+            $(".addtocart").click(function () {
+
+                var add = new Object();
+                var id = $(this).prop('id');
+                var tb = document.getElementById('text ' + id);
+                add.Count = $(tb).val();
+                add.IdPhone = id;
+                add.User = currentUser;
+                if (add.User == "") {
+                    toastr.warning('Сначало необходимо  @Html.ActionLink("авторизоваться","Login","Account",null,null) ', 'Внимание', { timeOut: 3000, });
+                    return;
+                }
+                if (add != null) {
                     $.ajax({
-                        type: 'GET',
-                        url: '/Home/Index/?page=' + page,
-                        success: function (data, textstatus) {
-                            if (data != '') {
-                                $("#scrolList").append(data);
+                        type: "POST",
+                        url: "/Home/AddToCart",
+                        data: JSON.stringify(add),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response != null) {
+
+                                toastr.success('Вы успешно добавили ' + response.PhoneName +  '<a href="/Manage/Cart"> в корзину</a>' , 'Товар добавлен.', { timeOut: 2500, "closeButton": true });
+                                $("#labelCart").text("Корзина (" + response.Count + ")");
+                                
                             }
                             else {
-                                page = -1;
+                                
                             }
-                            _inCallback = false;
-                        }
+                            
+                        },
+                        failure: function(response) {  
+                    alert(response.responseText);  
+                },  
+                error: function(response) {  
+                    alert(response.responseText);  
+                } 
+                        
                     });
                 }
-            }
-            </script>
+                
+                  $(this).prop('textContent', 'Добавлен в корзину');
+                  $(this).prop('disabled', 'true');
+                
+            });
+
+        })
+
+    </script>
 
 }
 

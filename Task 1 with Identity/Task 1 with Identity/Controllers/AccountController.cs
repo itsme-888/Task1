@@ -17,6 +17,7 @@ namespace Task_1_with_Identity.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private Model1 db = new Model1();
 
         public AccountController()
         {
@@ -155,6 +156,13 @@ namespace Task_1_with_Identity.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    Buyer buyer = new Buyer();
+                    buyer.Email = model.Email;
+                    buyer.Name = model.Name;
+                    buyer.PhoneNumber = model.Phone;
+                    buyer.Surname = model.Surname;
+                    db.Buyer.Add(buyer);
+                    await db.SaveChangesAsync();
                     await UserManager.AddToRoleAsync(user.Id, "user");
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     

@@ -1,0 +1,40 @@
+﻿@model Task_1_with_Identity.Models.Model1
+@{
+    ViewBag.Title = "Администрирование";
+}
+
+<h2>Управление покупателями</h2>
+
+
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+
+<table>
+    <tr>
+        <td>Email </td>
+        <td>Имя </td>
+        <td>Фамилия </td>
+        <td>Заказов на сумму </td>
+        <td>Кол-во товаров в корзине </td>
+        <td>Кол-во заказанного </td>
+        <td> </td>
+
+    </tr>
+
+    @foreach(var buyer in Model.Buyer)
+    {
+
+    }
+
+
+</table>

@@ -3,21 +3,125 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Collections.Generic;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Task_1_with_Identity.Models;
+
 
 namespace Task_1_with_Identity.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
+        private Model1 db =new Model1();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
         public ManageController()
         {
+        }
+
+        [HttpPost]
+        public JsonResult AddMoney(int money)
+        {
+            string email = ReturnBuyerByUserId().Email;
+            var buyer = db.Buyer.Where(c => c.Email == email).FirstOrDefault();
+            buyer.Balance += (decimal)money;
+            db.SaveChanges();
+            return Json(new {Count=buyer.Balance }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult Add(string count)
+        {
+
+            return View("Index");
+        }
+
+        [Authorize(Roles = "user")]
+        public ActionResult History()
+        {
+            ViewBag.Buyer = ReturnBuyerByUserId();
+            return View();
+        }
+
+        [Authorize(Roles = "user")]
+        public ActionResult Buy(Buyer buyer)
+        {
+
+            return View();
+        }
+
+
+        [Authorize(Roles = "user")]
+        public ActionResult DeleteFromCart(int id)
+        {
+
+                Cart cart = new Cart();
+                cart.Id = id;
+
+                db.Cart.Attach(cart);
+                db.Cart.Remove(cart);
+
+                db.SaveChanges();
+
+
+
+            return RedirectToAction("Cart", "Manage");
+
+        }
+        [HttpPost]
+        [Authorize(Roles = "user")]
+        public ActionResult MakeOrder()
+        {
+            Buyer buyer = ReturnBuyerByUserId();
+            List<Buy> buys = new List<Buy>();
+
+            foreach (Cart c in buyer.Carts)
+            {
+                Phone p = c.phone;
+                int count = c.Count;
+
+                Buy buy = new Buy();
+                buy.Buyer = buyer;
+                buy.Count = count;
+                buy.Date = DateTime.Now;
+                buy.Phone = p;
+
+                db.Buy.Add(buy);
+                
+                
+            }
+            db.Cart.RemoveRange(buyer.Carts);
+            db.SaveChanges();
+            
+
+            return View();
+        }
+        [HttpGet]
+        [Authorize(Roles = "user")]
+        public ActionResult MakeOrder(int? a)
+        {
+
+            return View();
+        }
+
+
+        [Authorize(Roles ="user")]
+        public ActionResult Cart()
+        {
+            Buyer buyer = ReturnBuyerByUserId();
+            
+            return View(buyer);
+        }
+
+        private Buyer ReturnBuyerByUserId()
+        {
+            string email = HttpContext.User.Identity.Name;
+            Buyer buyer = db.Buyer.Where(b => b.Email == email).FirstOrDefault();
+            return buyer;
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -64,13 +168,15 @@ namespace Task_1_with_Identity.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
+            string email = UserManager.GetEmail(userId);
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                LoginedBuyer = db.Buyer.Where(b => b.Email == email).Single()
             };
             return View(model);
         }

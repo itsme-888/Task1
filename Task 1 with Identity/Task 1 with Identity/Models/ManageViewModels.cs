@@ -1,17 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 
 namespace Task_1_with_Identity.Models
 {
     public class IndexViewModel
     {
+        public IndexViewModel()
+        {
+            ApplicationUser user = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.Current.User.Identity.GetUserId());
+            UserId = user.Id;
+        }
         public bool HasPassword { get; set; }
         public IList<UserLoginInfo> Logins { get; set; }
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+
+        public string UserId { get; set; }
+        public Buyer LoginedBuyer { get; set; }
     }
 
     public class ManageLoginsViewModel
