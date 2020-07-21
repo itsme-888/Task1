@@ -1,0 +1,100 @@
+﻿@model Task_1_with_Identity.Models.Buyer
+@{
+    ViewBag.Title = "Управление пользователем";
+}
+
+<style>
+    .raz {
+        border-spacing: 9.6px;
+        /* или */
+        border-spacing: 9.6px 9.6px; /* border-collapse наследуется, применяется только к table или inline-table элементам с border-collapse: separate; */
+    }
+
+        .raz,
+        .raz td {
+            border: 1px solid red;
+        }
+</style>
+
+<h2>Управление: @Model.Name @Model.Surname </h2>
+
+@if (Model.Carts.Count() != 0)
+{
+    <h3>Товары в корзине пользователя:</h3>
+    <table class="raz" id="scrolList">
+        <tr>
+            <td><p>Товар</p></td>
+            <td><p>Количество</p></td>
+            <td><p>Цена</p></td>
+            <td><p>Общая цена</p></td>
+            <td><p>Удалить </p></td>
+        </tr>
+
+
+        @foreach (var item in Model.Carts)
+        {
+            <tr>
+                <td><p> @item.phone.Name </p></td>
+                <td><p> @item.Count </p></td>
+                <td><p> @item.phone.Price </p></td>
+                <td><p>@(item.phone.Price * item.Count)</p></td>
+                <td><p> @Html.ActionLink("Удалить запись", "DeleteFromCart", new { id = item.Id, idUser = Model.Id }) </p></td>
+            </tr>
+        }
+
+
+    </table>
+}
+else
+{
+    <h3>В корзине пользователя пусто</h3>
+}
+
+
+@if (Model.Buy.Count() != 0)
+{
+    <h3>Заказы пользователя:</h3>
+    <table class="raz" id="scrolList">
+        <tr>
+            <td><p>Дата</p></td>
+            <td><p>Товар</p></td>
+            <td><p>Стоимость</p></td>
+            <td><p>Количество</p></td>
+            <td><p>Общая стоимость</p></td>
+            <td><p>Удалить запись</p></td>
+
+        </tr>
+
+        @foreach (var buy in Model.Buy)
+        {
+
+            <tr>
+                <td><p>@buy.Date </p></td>
+                <td><p>@buy.Phone.Name </p></td>
+                <td><p>@buy.Phone.Price </p></td>
+                <td><p>@buy.Count </p></td>
+                <td><p>@(buy.Phone.Price * buy.Count) </p></td>
+                <td><p>@Html.ActionLink("Удалить запись", "DeleteFromBuy", new { id = buy.Id, idUser = Model.Id }) </p></td>
+            </tr>
+        }
+
+
+
+    </table>
+
+    <h4>Общая сумма покупок: @Model.Buy.Sum(s => s.Phone.Price * s.Count) </h4>
+}
+else
+{
+    <h3>Этим пользователем ничего не было куплено</h3>
+}
+
+@using (Html.BeginForm("ChangePass", "Account",new {id=Model.Id } ,FormMethod.Post,null ))
+{
+    @Html.AntiForgeryToken()
+    @Html.Label("Изменить пароль пользователя") @Html.TextBox("pass")
+
+    <input type="submit" value="Изменить" />
+}
+
+@Html.Partial("_EditUserPartical", Model);

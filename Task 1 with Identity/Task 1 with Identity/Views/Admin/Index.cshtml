@@ -1,4 +1,4 @@
-﻿@model Task_1_with_Identity.Models.Model1
+﻿@model Task_1_with_Identity.Models.AdminManageView
 @{
     ViewBag.Title = "Администрирование";
 }
@@ -19,21 +19,34 @@
         }
 </style>
 
-<table>
+<table class="raz">
     <tr>
         <td>Email </td>
         <td>Имя </td>
         <td>Фамилия </td>
+        <td>Телефон</td>
+        <td>Адрес</td>
         <td>Заказов на сумму </td>
         <td>Кол-во товаров в корзине </td>
         <td>Кол-во заказанного </td>
-        <td> </td>
+        <td> Управление </td>
 
     </tr>
 
-    @foreach(var buyer in Model.Buyer)
+    @foreach (var buyer in Model.Buyer)
     {
-
+        <tr>
+        <td>@buyer.Email</td>
+        <td>@buyer.Name</td>
+        <td>@buyer.Surname</td>
+            <td>@buyer.PhoneNumber</td>
+            <td>@buyer.Address</td>
+        <td>@buyer.Buy.Sum(s=>s.Phone.Price)</td>
+        <td>@buyer.Carts.Count()</td>
+        <td>@buyer.Buy.Sum(s=>s.Count)</td>
+        <td> @Html.ActionLink("Управление","ManageUser", new {id=buyer.Id }) </td>
+        <td>@Html.ActionLink("Удалить пользователя","DeleteUser","Account",new {id=buyer.Id },null) </td>
+        </tr>
     }
 
 

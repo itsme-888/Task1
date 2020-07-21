@@ -23,8 +23,44 @@ namespace Task_1_with_Identity.Controllers
         {
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePass(int id, FormCollection formCollection)
+        {
+            string email = db.Buyer.Where(i => i.Id == id).SingleOrDefault().Email;
+            ApplicationUser user = UserManager.FindByEmail(email);
+
+            var resetToken = UserManager.GeneratePasswordResetToken(user.Id);
+            UserManager.ResetPassword(user.Id, resetToken, formCollection["pass"]);
+
+            return RedirectToAction("ManageUser", "Admin", new {id=id });
+        }
+
+
+        [ActionName("DeleteUser")]
+        public  ActionResult DeleteUser(int? id)
+        {
+            if (id != null)
+            {
+                Buyer buyer = db.Buyer.Where(a => a.Id == id).SingleOrDefault();
+                string email = buyer.Email;
+                ApplicationUser user = UserManager.Users.Where(m => m.Email == email).SingleOrDefault(); 
+                if (user != null)
+                {
+                    IdentityResult result = UserManager.Delete(user);
+                }
+                db.Buyer.Attach(buyer);
+                db.Buyer.Remove(buyer);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index", "Admin");
+        }
+
+
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
+            
             UserManager = userManager;
             SignInManager = signInManager;
         }

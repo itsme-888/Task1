@@ -310,6 +310,8 @@
     <Content Include="Views\Manage\History.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Manage\MakeOrder.cshtml" />
+    <Content Include="Views\Admin\ManageUser.cshtml" />
+    <Content Include="Views\Admin\_EditUserPartical.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
